@@ -1,5 +1,5 @@
 from src.models import db, ma
-from marshmallow import validate
+from marshmallow import fields
 
 class Character(db.Model):
     __tablename__ = 'characters'
@@ -15,6 +15,24 @@ class Character(db.Model):
     origin_id = db.Column(db.Integer, db.ForeignKey('locations.id'))
     location_id = db.Column(db.Integer, db.ForeignKey('locations.id'))
 
+    origin = db.relationship(
+        "Location",
+        foreign_keys=[origin_id],
+        back_populates="origin_characters"
+    )
+
+    location = db.relationship(
+        "Location",
+        foreign_keys=[location_id],
+        back_populates="current_characters"
+    )
+
+    episodes = db.relationship(
+        "Episode",
+        secondary="characters_episodes",
+        back_populates="characters"
+    )
+
 
     def __repr__(self):
         return f"<Character {self.name}>"
@@ -27,7 +45,23 @@ class CharacterOutput(ma.Schema):
     type = ma.String()
     gender = ma.String()
     image = ma.String()
-    origin_id = ma.Integer()
-    location_id = ma.Integer()
+
+    origin = fields.Nested(
+        "LocationOutput",
+        only=("id", "name"),
+        allow_none=True
+    )
+
+    location = fields.Nested(
+        "LocationOutput",
+        only=("id", "name"),
+        allow_none=True
+    )
+
+    episodes = fields.List(
+        fields.Nested("EpisodeOutput", only=("id", "name"))
+    )
+
 
 character_output = CharacterOutput()
+characters_output = CharacterOutput(many=True)

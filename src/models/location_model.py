@@ -8,7 +8,18 @@ class Location(db.Model):
     type = db.Column(db.String(50), nullable=False)
     dimension = db.Column(db.String(50), nullable=False)
 
-    characters = db.relationship("Character", backref="location_relation", lazy=True)
+    origin_characters = db.relationship(
+        "Character",
+        foreign_keys="Character.origin_id",
+        back_populates="origin"
+    )
+
+    
+    current_characters = db.relationship(
+        "Character",
+        foreign_keys="Character.location_id",
+        back_populates="location"
+    )
    
 class LocationOutput(ma.Schema):
     id = ma.Integer()
