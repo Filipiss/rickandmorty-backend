@@ -11,14 +11,18 @@ class Location(db.Model):
     origin_characters = db.relationship(
         "Character",
         foreign_keys="Character.origin_id",
-        back_populates="origin"
+        back_populates="origin",
+        uselist=True,
+        lazy=True
     )
 
     
     current_characters = db.relationship(
         "Character",
         foreign_keys="Character.location_id",
-        back_populates="location"
+        back_populates="location",
+        uselist=True,
+        lazy=True
     )
    
 class LocationOutput(ma.Schema):

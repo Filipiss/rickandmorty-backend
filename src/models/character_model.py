@@ -1,5 +1,4 @@
 from src.models import db, ma
-from marshmallow import fields
 
 class Character(db.Model):
     __tablename__ = 'characters'
@@ -12,19 +11,23 @@ class Character(db.Model):
     gender = db.Column(db.String(50), nullable=False)
     image = db.Column(db.String(200), nullable=False)
     
-    origin_id = db.Column(db.Integer, db.ForeignKey('locations.id'))
-    location_id = db.Column(db.Integer, db.ForeignKey('locations.id'))
+    origin_id = db.Column(db.Integer, db.ForeignKey('locations.id'), nullable=True)
+    location_id = db.Column(db.Integer, db.ForeignKey('locations.id'), nullable=True)
 
     origin = db.relationship(
         "Location",
         foreign_keys=[origin_id],
-        back_populates="origin_characters"
+        back_populates="origin_characters",
+        uselist=False,
+        lazy=True
     )
 
     location = db.relationship(
         "Location",
         foreign_keys=[location_id],
-        back_populates="current_characters"
+        back_populates="current_characters",
+        uselist=False,
+        lazy=True
     )
 
     episodes = db.relationship(
@@ -46,20 +49,18 @@ class CharacterOutput(ma.Schema):
     gender = ma.String()
     image = ma.String()
 
-    origin = fields.Nested(
+    origin = ma.Nested(
         "LocationOutput",
-        only=("id", "name"),
         allow_none=True
     )
 
-    location = fields.Nested(
+    location = ma.Nested(
         "LocationOutput",
-        only=("id", "name"),
         allow_none=True
     )
 
-    episodes = fields.List(
-        fields.Nested("EpisodeOutput", only=("id", "name"))
+    episodes = ma.List(
+        ma.Nested("EpisodeOutput")
     )
 
 
