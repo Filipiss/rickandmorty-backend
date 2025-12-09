@@ -1,4 +1,5 @@
 from src.models import db, ma
+from sqlalchemy.ext.hybrid import hybrid_property
 
 class Location(db.Model):
     __tablename__ = 'locations'
@@ -24,11 +25,16 @@ class Location(db.Model):
         uselist=True,
         lazy=True
     )
+
+    @hybrid_property
+    def current_residents_count(self):
+        return len(self.current_characters)
    
 class LocationOutput(ma.Schema):
     id = ma.Integer()
     name = ma.String()
     type = ma.String()
     dimension = ma.String()
+    current_residents_count = ma.Integer()
 
     

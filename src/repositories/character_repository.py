@@ -8,7 +8,13 @@ class CharacterRepository:
 
     def get_all_characters(self, name, limit, offset):
         query = Character.query
+        
         if name:
             query = query.filter(Character.name.ilike(f"%{name}%"))
-        return query.limit(limit).offset(offset).all()
+        
+        total = query.count() 
+
+        results = query.limit(limit).offset(offset).all()
+
+        return results, total
     

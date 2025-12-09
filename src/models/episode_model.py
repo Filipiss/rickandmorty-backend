@@ -1,4 +1,5 @@
 from src.models import db, ma
+from sqlalchemy.ext.hybrid import hybrid_property
 
 class Episode(db.Model):
     __tablename__ = 'episodes'
@@ -13,7 +14,6 @@ class Episode(db.Model):
         secondary="characters_episodes",
         back_populates="episodes"
     )
-
     def __repr__(self):
         return f"<Episode {self.name}>"
     
